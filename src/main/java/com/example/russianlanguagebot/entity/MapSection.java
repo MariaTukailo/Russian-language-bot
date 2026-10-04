@@ -27,6 +27,10 @@ public class MapSection {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "map_id")
+    private LearningMap learningMap;
+
+    @ManyToOne
     @JoinColumn(name = "video_id")
     private Video video;
 

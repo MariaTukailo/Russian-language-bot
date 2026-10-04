@@ -68,6 +68,17 @@ public class ConspectService {
         log.info("Конспект id={} удалён", id);
     }
 
+    @Transactional
+    public void deleteTopic(Long conspectTopicId) {
+        log.info("Удаление темы конспекта id={}", conspectTopicId);
+        if (!topicRepository.existsById(conspectTopicId)) {
+            log.warn("Нечего удалять — тема конспекта id={} не найдена", conspectTopicId);
+            throw new NotFoundException("Тема конспекта", conspectTopicId);
+        }
+        topicRepository.deleteById(conspectTopicId);
+        log.info("Тема конспекта id={} удалена", conspectTopicId);
+    }
+
     @Transactional(readOnly = true)
     public List<String> getPagesForTopic(Long conspectTopicId) {
         log.info("Запрос страниц для темы конспекта id={}", conspectTopicId);

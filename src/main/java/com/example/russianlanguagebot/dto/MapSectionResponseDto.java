@@ -15,6 +15,8 @@ public class MapSectionResponseDto {
 
     private Long id;
 
+    private Long mapId;
+
     private VideoDto video;
 
     private Long conspectDocumentId;

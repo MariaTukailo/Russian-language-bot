@@ -13,13 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -57,11 +51,12 @@ public class MapController {
     }
 
     @Operation(summary = "Создать карту",
-            description = "Создаёт карту сразу со списком разделов. Список может быть пустым")
+            description = "Создаёт единственную карту со списком разделов. Повторный вызов вернёт 409")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Карта создана"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
-            @ApiResponse(responseCode = "404", description = "Одна из связанных сущностей не найдена")
+            @ApiResponse(responseCode = "404", description = "Связанная сущность не найдена"),
+            @ApiResponse(responseCode = "409", description = "Карта уже существует")
     })
     @PostMapping
     public ResponseEntity<LearningMapResponseDto> create(
@@ -69,17 +64,33 @@ public class MapController {
         return ResponseEntity.ok(mapService.save(dto));
     }
 
+    @Operation(summary = "Удалить раздел карты",
+            description = "Удаляет раздел с карты. Видео, конспект и тест остаются в системе")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Раздел удалён"),
+            @ApiResponse(responseCode = "404", description = "Раздел карты не найден")
+    })
+    @DeleteMapping("/sections/{id}")
+    public ResponseEntity<Void> deleteSection(
+            @Parameter(description = "Идентификатор раздела карты", example = "1")
+            @PathVariable Long id) {
+        mapService.deleteSection(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "Создать раздел карты",
-            description = "Создаёт раздел карты, связывая видео, конспект и тест по их id")
+            description = "Добавляет раздел в указанную карту по её id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Раздел создан"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
-            @ApiResponse(responseCode = "404", description = "Видео, конспект или тест не найдены")
+            @ApiResponse(responseCode = "404", description = "Карта, видео, конспект или тест не найдены")
     })
-    @PostMapping("/sections")
+    @PostMapping("/{mapId}/sections")
     public ResponseEntity<MapSectionResponseDto> createSection(
+            @Parameter(description = "Идентификатор карты", example = "1")
+            @PathVariable Long mapId,
             @Valid @RequestBody MapSectionRequestDto dto) {
-        return ResponseEntity.ok(mapService.saveSection(dto));
+        return ResponseEntity.ok(mapService.saveSection(mapId, dto));
     }
 
     @Operation(summary = "Отметить раздел пройденным",

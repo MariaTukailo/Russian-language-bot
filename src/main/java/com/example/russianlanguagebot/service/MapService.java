@@ -6,6 +6,7 @@ import com.example.russianlanguagebot.dto.MapSectionRequestDto;
 import com.example.russianlanguagebot.dto.MapSectionResponseDto;
 import com.example.russianlanguagebot.entity.LearningMap;
 import com.example.russianlanguagebot.entity.MapSection;
+import com.example.russianlanguagebot.exception.ConflictException;
 import com.example.russianlanguagebot.exception.NotFoundException;
 import com.example.russianlanguagebot.mapper.MapMapper;
 import com.example.russianlanguagebot.repository.LearningMapRepository;
@@ -54,15 +55,21 @@ public class MapService {
     @Transactional
     public LearningMapResponseDto save(LearningMapRequestDto dto) {
         log.info("Сохранение карты, разделов: {}", dto.getSections().size());
+
+        if (mapRepository.count() > 0) {
+            log.warn("Попытка создать вторую карту — запрещено");
+            throw new ConflictException("Карта уже существует. Допустима только одна карта в системе");
+        }
+
         LearningMap saved = mapRepository.save(mapMapper.toEntity(dto));
         log.info("Карта сохранена с id={}", saved.getId());
         return mapMapper.toDto(saved);
     }
 
     @Transactional
-    public MapSectionResponseDto saveSection(MapSectionRequestDto dto) {
-        log.info("Сохранение раздела карты");
-        MapSection saved = sectionRepository.save(mapMapper.toSectionEntity(dto));
+    public MapSectionResponseDto saveSection(Long mapId, MapSectionRequestDto dto) {
+        log.info("Сохранение раздела карты для карты id={}", mapId);
+        MapSection saved = sectionRepository.save(mapMapper.toSectionEntity(dto, mapId));
         log.info("Раздел карты сохранён с id={}", saved.getId());
         return mapMapper.toSectionDto(saved);
     }
@@ -81,5 +88,16 @@ public class MapService {
         MapSection saved = sectionRepository.save(section);
         log.info("Раздел карты id={} отмечен как пройденный", sectionId);
         return mapMapper.toSectionDto(saved);
+    }
+
+    @Transactional
+    public void deleteSection(Long sectionId) {
+        log.info("Удаление раздела карты id={}", sectionId);
+        if (!sectionRepository.existsById(sectionId)) {
+            log.warn("Нечего удалять — раздел карты id={} не найден", sectionId);
+            throw new NotFoundException("Раздел карты", sectionId);
+        }
+        sectionRepository.deleteById(sectionId);
+        log.info("Раздел карты id={} удалён", sectionId);
     }
 }

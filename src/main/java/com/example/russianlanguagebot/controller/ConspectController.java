@@ -80,6 +80,20 @@ public class ConspectController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Удалить тему конспекта",
+            description = "Удаляет привязку темы к диапазону страниц. Сам документ не трогается")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Тема удалена"),
+            @ApiResponse(responseCode = "404", description = "Тема конспекта не найдена")
+    })
+    @DeleteMapping("/topics/{id}")
+    public ResponseEntity<Void> deleteTopic(
+            @Parameter(description = "Идентификатор темы конспекта", example = "1")
+            @PathVariable Long id) {
+        conspectService.deleteTopic(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "Получить страницы темы конспекта",
             description = "Возвращает список URL картинок-страниц для указанной темы конспекта")
     @ApiResponses({
