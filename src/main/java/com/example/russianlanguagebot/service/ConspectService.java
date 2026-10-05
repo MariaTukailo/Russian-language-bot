@@ -78,7 +78,6 @@ public class ConspectService {
         topicRepository.deleteById(conspectTopicId);
         log.info("Тема конспекта id={} удалена", conspectTopicId);
     }
-g
     @Transactional(readOnly = true)
     public List<String> getPagesForTopic(Long conspectTopicId) {
         log.info("Запрос страниц для темы конспекта id={}", conspectTopicId);
