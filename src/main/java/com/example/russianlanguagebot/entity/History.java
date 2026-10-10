@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class History {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,18 +24,6 @@ public class History {
     @JoinColumn(name = "test_id")
     private Test test;
 
-    @Column(name="correct_answers")
-    private Integer correctAnswersCount;
-
-    @Column(name="total_questions")
-    private Integer totalQuestionsCount;
-
-    @Column(name="passed")
-    private Boolean passed;
-
-    @Column(name="coins")
-    private Integer coinsEarned;
-
-    @Column(name="complete_at")
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
 }
