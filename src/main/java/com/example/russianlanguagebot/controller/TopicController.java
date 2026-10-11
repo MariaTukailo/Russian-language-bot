@@ -1,5 +1,6 @@
 package com.example.russianlanguagebot.controller;
 
+import com.example.russianlanguagebot.dto.TopicListItemDto;
 import com.example.russianlanguagebot.dto.TopicRequestDto;
 import com.example.russianlanguagebot.dto.TopicResponseDto;
 import com.example.russianlanguagebot.service.TopicService;
@@ -18,12 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Slf4j
-@Tag(name = "Темы", description = "Управление темами обучения")
+@Tag(name = "Темы", description = "Управление темами внутри разделов")
 @RestController
 @RequestMapping("/api/topics")
 public class TopicController {
@@ -34,8 +36,26 @@ public class TopicController {
         this.topicService = topicService;
     }
 
+    @Operation(summary = "Получить список тем для админки",
+            description = "Возвращает плоский список тем с количеством тестов")
+    @ApiResponse(responseCode = "200", description = "Список успешно получен")
+    @GetMapping("/list")
+    public List<TopicListItemDto> getList() {
+        return topicService.findAllForList();
+    }
+
+    @Operation(summary = "Получить темы раздела",
+            description = "Возвращает список тем, принадлежащих указанному разделу")
+    @ApiResponse(responseCode = "200", description = "Список успешно получен")
+    @GetMapping("/by-section/{sectionId}")
+    public List<TopicListItemDto> getBySection(
+            @Parameter(description = "Идентификатор раздела", example = "1")
+            @PathVariable Long sectionId) {
+        return topicService.findBySectionId(sectionId);
+    }
+
     @Operation(summary = "Получить все темы",
-            description = "Возвращает список всех тем с вложенными тестами (без флага correct)")
+            description = "Возвращает список всех тем с вложенными тестами и вопросами")
     @ApiResponse(responseCode = "200", description = "Список успешно получен")
     @GetMapping
     public List<TopicResponseDto> getAll() {
@@ -56,29 +76,35 @@ public class TopicController {
     }
 
     @Operation(summary = "Создать тему",
-            description = "Создаёт тему. Можно сразу передать вложенные тесты (с флагом correct), либо пустой список")
+            description = "Создаёт тему. sectionId — id раздела, к которому привязать (опционально)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Тема создана"),
-            @ApiResponse(responseCode = "400", description = "Ошибка валидации")
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
+            @ApiResponse(responseCode = "404", description = "Раздел не найден")
     })
     @PostMapping
-    public ResponseEntity<TopicResponseDto> create(@Valid @RequestBody TopicRequestDto dto) {
-        return ResponseEntity.ok(topicService.save(dto));
+    public ResponseEntity<TopicResponseDto> create(
+            @Parameter(description = "Идентификатор раздела", example = "1")
+            @RequestParam(required = false) Long sectionId,
+            @Valid @RequestBody TopicRequestDto dto) {
+        return ResponseEntity.ok(topicService.save(dto, sectionId));
     }
 
     @Operation(summary = "Обновить тему",
-            description = "Обновляет тему вместе с вложенными тестами (старые удаляются, новые вставляются)")
+            description = "Обновляет тему. sectionId — id раздела для перемещения (опционально)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Тема обновлена"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
-            @ApiResponse(responseCode = "404", description = "Тема не найдена")
+            @ApiResponse(responseCode = "404", description = "Тема или раздел не найдены")
     })
     @PutMapping("/{id}")
     public ResponseEntity<TopicResponseDto> update(
             @Parameter(description = "Идентификатор темы", example = "1")
             @PathVariable Long id,
+            @Parameter(description = "Идентификатор раздела", example = "1")
+            @RequestParam(required = false) Long sectionId,
             @Valid @RequestBody TopicRequestDto dto) {
-        return ResponseEntity.ok(topicService.update(id, dto));
+        return ResponseEntity.ok(topicService.update(id, dto, sectionId));
     }
 
     @Operation(summary = "Удалить тему",

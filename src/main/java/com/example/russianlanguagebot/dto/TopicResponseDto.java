@@ -19,5 +19,7 @@ public class TopicResponseDto {
 
     private String title;
 
+    private String description;
+
     private List<TestResponseDto> tests;
 }

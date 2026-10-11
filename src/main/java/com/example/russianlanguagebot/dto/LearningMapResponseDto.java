@@ -17,5 +17,5 @@ public class LearningMapResponseDto {
 
     private Long id;
 
-    private List<MapSectionResponseDto> sections;
+    private List<SectionResponseDto> sections;
 }

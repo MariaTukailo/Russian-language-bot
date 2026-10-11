@@ -31,5 +31,5 @@ public class LearningMap {
 
     @OneToMany(mappedBy = "learningMap", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
-    private List<MapSection> sections;
+    private List<Section> sections;
 }

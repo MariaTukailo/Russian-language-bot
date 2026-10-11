@@ -19,5 +19,5 @@ public class LearningMapRequestDto {
 
     @NotNull(message = "Список разделов обязателен (может быть пустым)")
     @Valid
-    private List<MapSectionRequestDto> sections;
+    private List<SectionRequestDto> sections;
 }
