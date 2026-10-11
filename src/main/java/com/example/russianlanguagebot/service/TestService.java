@@ -22,12 +22,14 @@ import java.util.List;
 @Service
 public class TestService {
 
+    private final HistoryService historyService;
     private final TestRepository testRepository;
     private final TestMapper testMapper;
 
-    public TestService(TestRepository testRepository, TestMapper testMapper) {
+    public TestService(TestRepository testRepository, TestMapper testMapper,HistoryService historyService) {
         this.testRepository = testRepository;
         this.testMapper = testMapper;
+        this.historyService = historyService;
     }
 
     @Transactional(readOnly = true)
