@@ -25,7 +25,6 @@ public class TestMapper {
 
         return Test.builder()
                 .title(dto.getTitle())
-                .passed(false)
                 .questions(questions)
                 .build();
     }
@@ -40,7 +39,6 @@ public class TestMapper {
         return TestResponseDto.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
-                .passed(entity.getPassed())
                 .questions(questions)
                 .build();
     }

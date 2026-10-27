@@ -1,23 +1,29 @@
 package com.example.russianlanguagebot.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
+import java.util.List;
+
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Schema(description = "Результат прохождения теста")
 public class TestResultDto {
 
-    private boolean passed;
+    @Schema(description = "Количество правильных ответов", example = "7")
+    private Integer correctAnswers;
 
-    private int xpEarned;
+    @Schema(description = "Всего вопросов в тесте", example = "10")
+    private Integer totalQuestions;
 
-    private int coinsEarned;
-
+    @Schema(description = "Сообщение с результатом", example = "Правильных ответов: 7 из 10")
     private String message;
+
+    @Schema(description = "Новые достижения, полученные за тест")
+    private List<AchievementResponseDto> newAchievements;
 }

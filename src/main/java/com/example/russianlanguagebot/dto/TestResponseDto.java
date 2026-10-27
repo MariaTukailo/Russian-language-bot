@@ -19,7 +19,5 @@ public class TestResponseDto {
 
     private String title;
 
-    private Boolean passed;
-
     private List<QuestionResponseDto> questions;
 }

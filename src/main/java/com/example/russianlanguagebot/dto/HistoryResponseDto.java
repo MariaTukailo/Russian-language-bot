@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Schema(description = "Запись истории прохождения теста")
 public class HistoryResponseDto {
 
-    @Schema(description = "Id пройденного теста", example = "1")
+    @Schema(description = "Id записи истории", example = "1")
     private Long id;
 
     @Schema(description = "Id теста", example = "1")

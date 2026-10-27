@@ -31,8 +31,6 @@ public class Test {
 
     private String title;
 
-    private Boolean passed;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "test_id")
     private List<Question> questions;

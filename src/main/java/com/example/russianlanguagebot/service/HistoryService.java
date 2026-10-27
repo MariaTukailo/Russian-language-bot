@@ -1,9 +1,11 @@
 package com.example.russianlanguagebot.service;
 
+import com.example.russianlanguagebot.dto.HistoryDetailsResponseDto;
 import com.example.russianlanguagebot.dto.HistoryResponseDto;
 import com.example.russianlanguagebot.entity.History;
 import com.example.russianlanguagebot.entity.Test;
 import com.example.russianlanguagebot.entity.User;
+import com.example.russianlanguagebot.entity.UserAnswer;
 import com.example.russianlanguagebot.exception.NotFoundException;
 import com.example.russianlanguagebot.mapper.HistoryMapper;
 import com.example.russianlanguagebot.repository.HistoryRepository;
@@ -26,9 +28,9 @@ public class HistoryService {
     private final UserRepository userRepository;
     private final HistoryMapper historyMapper;
 
-    public HistoryResponseDto findById(Long id) {
+    public HistoryDetailsResponseDto findById(Long id) {
         return historyRepository.findById(id)
-                .map(historyMapper::toDto)
+                .map(historyMapper::toDetailsDto)
                 .orElseThrow(() -> {
                     log.warn("Запись истории id={} не найдена", id);
                     return new NotFoundException("История", id);
@@ -42,24 +44,30 @@ public class HistoryService {
                 .toList();
     }
 
-    public boolean isTestPassed(Long userId, Long testId) {
-        return historyRepository.existsByUserIdAndTestId(userId, testId);
-    }
-
     @Transactional
-    public HistoryResponseDto create(Long userId, Test test) {
+    public HistoryResponseDto create(Long userId, Test test, int correct, int total,
+                                     List<UserAnswer> answers) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("Пользователь id={} не найден при записи истории", userId);
                     return new NotFoundException("Пользователь", userId);
                 });
 
-        History saved = historyRepository.save(History.builder()
+        History history = History.builder()
                 .user(user)
                 .test(test)
+                .correctAnswers(correct)
+                .totalQuestions(total)
                 .completedAt(LocalDateTime.now())
-                .build());
-        log.info("Записано прохождение теста id={} пользователем id={}", test.getId(), userId);
+                .answers(answers)
+                .build();
+
+
+        answers.forEach(answer -> answer.setHistory(history));
+
+        History saved = historyRepository.save(history);
+        log.info("Записана попытка теста id={} пользователем id={}: {}/{}",
+                test.getId(), userId, correct, total);
         return historyMapper.toDto(saved);
     }
 }
