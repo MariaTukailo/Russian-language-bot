@@ -31,6 +31,7 @@ public class UserMapper {
             return null;
         }
         return User.builder()
+                .telegramId(dto.getTelegramId()) // <--- ДОБАВЛЕНО!
                 .username(dto.getUsername())
                 .role(Role.USER)
                 .coins(0)

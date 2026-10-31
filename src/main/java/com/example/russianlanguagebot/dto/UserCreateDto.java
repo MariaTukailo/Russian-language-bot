@@ -1,6 +1,7 @@
 package com.example.russianlanguagebot.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCreateDto {
+    @NotNull(message = "Telegram ID обязателен")
+    private Long telegramId;
 
     @NotBlank(message = "Username обязателен")
     @Size(min = 3, max = 32, message = "Username должен быть от 3 до 32 символов")
