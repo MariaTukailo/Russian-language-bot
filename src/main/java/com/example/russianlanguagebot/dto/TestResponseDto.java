@@ -18,6 +18,7 @@ public class TestResponseDto {
     private Long id;
 
     private String title;
-
+    private Long topicId;
+    private String topicTitle;
     private List<QuestionResponseDto> questions;
 }

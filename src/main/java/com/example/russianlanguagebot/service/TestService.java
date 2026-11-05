@@ -68,6 +68,12 @@ public class TestService {
     }
 
     @Transactional
+    public TestResponseDto save(TestRequestDto dto, Long topicId) {
+        Test saved = testRepository.save(testMapper.toEntity(dto, topicId));
+        return testMapper.toDto(saved);
+    }
+
+    @Transactional
     public TestResponseDto save(TestRequestDto dto) {
         log.info("Сохранение теста: title={}", dto.getTitle());
         Test saved = testRepository.save(testMapper.toEntity(dto));
@@ -79,14 +85,19 @@ public class TestService {
     public TestResponseDto update(Long id, TestRequestDto dto) {
         log.info("Обновление теста id={}", id);
 
-        if (!testRepository.existsById(id)) {
-            log.warn("Тест с id={} не найден при обновлении", id);
-            throw new NotFoundException("Тест", id);
-        }
+        Test existingTest = testRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Тест с id={} не найден при обновлении", id);
+                    return new NotFoundException("Тест", id);
+                });
 
-        Test toSave = testMapper.toEntity(dto);
+        // Сохраняем привязку к теме, если она была
+        Long topicId = existingTest.getTopic() != null ? existingTest.getTopic().getId() : null;
+
+        Test toSave = testMapper.toEntity(dto, topicId);
         toSave.setId(id);
         Test updated = testRepository.save(toSave);
+
         log.info("Тест id={} обновлён", id);
         return testMapper.toDto(updated);
     }
@@ -209,7 +220,6 @@ public class TestService {
                 userAnswers
         );
 
-        // 1 правильный ответ = +1 очко
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new NotFoundException("Пользователь", dto.getUserId()));
 
@@ -217,7 +227,6 @@ public class TestService {
         user.setCoins(currentCoins + correct);
         userRepository.save(user);
 
-        // Выдача достижений, порог которых достигнут
         List<AchievementResponseDto> newAchievements =
                 achievementService.grantEligibleAchievements(user.getId());
 

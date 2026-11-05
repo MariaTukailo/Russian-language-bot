@@ -1,51 +1,63 @@
+import { useEffect, useState } from 'react'
 import StatCard from '../../components/StatCard'
-import ActionItem from '../../components/ActionItem'
-import { adminStats, recentActions } from '../../mocks/stats'
+import { getDashboardStats } from '../../api/stats'
 
 export default function Dashboard() {
+    const [stats, setStats] = useState({
+        sectionsCount: 0,
+        topicsCount: 0,
+        questionsCount: 0,
+        usersCount: 0
+    })
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        getDashboardStats()
+            .then(data => {
+                setStats(data)
+                setLoading(false)
+            })
+            .catch(err => {
+                console.error(err)
+                setLoading(false)
+            })
+    }, [])
+
     return (
         <div className="dashboard">
             <header className="dashboard-header">
                 <h1>Панель администратора</h1>
                 <p className="dashboard-subtitle">
-                    Управляйте контентом и следите за обучением
+                    Актуальная статистика вашего курса
                 </p>
             </header>
 
-            <section className="stats-grid">
-                <StatCard
-                    value={adminStats.sectionsCount}
-                    label="Раздела"
-                    color="green"
-                />
-                <StatCard
-                    value={adminStats.topicsCount}
-                    label="Тем"
-                    color="blue"
-                />
-                <StatCard
-                    value={adminStats.questionsCount}
-                    label="Вопросов"
-                    color="red"
-                />
-                <StatCard
-                    value={adminStats.usersCount}
-                    label="Пользователей"
-                    color="orange"
-                />
-            </section>
-
-            <section className="recent-actions">
-                <h2>Последние действия</h2>
-                {recentActions.map(action => (
-                    <ActionItem
-                        key={action.id}
-                        title={action.title}
-                        subtitle={action.subtitle}
-                        date={action.date}
+            {loading ? (
+                <p>Загрузка данных...</p>
+            ) : (
+                <section className="stats-grid">
+                    <StatCard
+                        value={stats.sectionsCount}
+                        label="Разделов"
+                        color="green"
                     />
-                ))}
-            </section>
+                    <StatCard
+                        value={stats.topicsCount}
+                        label="Тем"
+                        color="blue"
+                    />
+                    <StatCard
+                        value={stats.questionsCount}
+                        label="Вопросов"
+                        color="red"
+                    />
+                    <StatCard
+                        value={stats.usersCount}
+                        label="Пользователей"
+                        color="orange"
+                    />
+                </section>
+            )}
         </div>
     )
 }

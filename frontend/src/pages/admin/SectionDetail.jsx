@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getSectionById } from '../../api/sections'
+import { getSectionById, deleteSection } from '../../api/sections'
 
 function pluralize(count, one, few, many) {
     const mod10 = count % 10
@@ -15,39 +15,35 @@ export default function SectionDetail() {
     const navigate = useNavigate()
     const [section, setSection] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
 
     useEffect(() => {
-        setLoading(true)
         getSectionById(id)
-            .then(data => {
-                setSection(data)
-                setLoading(false)
-            })
-            .catch(err => {
-                console.error(err)
-                setError('Раздел не найден')
-                setLoading(false)
-            })
+            .then(data => { setSection(data); setLoading(false) })
+            .catch(() => setLoading(false))
     }, [id])
 
+    const handleDelete = () => {
+        if (window.confirm('Удалить этот раздел?')) {
+            deleteSection(id).then(() => navigate('/admin/sections'))
+        }
+    }
+
     if (loading) return <p>Загрузка...</p>
-    if (error) return <p style={{ color: 'red' }}>{error}</p>
     if (!section) return null
 
     const topicsCount = section.topics?.length || 0
 
     return (
         <div className="section-detail-page">
-            <button
-                className="btn btn-ghost"
-                onClick={() => navigate('/admin/sections')}
-            >
+            <button className="btn btn-ghost" onClick={() => navigate('/admin/sections')}>
                 ← Назад к разделам
             </button>
 
             <header className="section-detail-header">
-                <h1>{section.title}</h1>
+                <div className="header-title-row">
+                    <h1>{section.title}</h1>
+                    <button className="btn btn-danger btn-sm" onClick={handleDelete}>Удалить раздел</button>
+                </div>
                 <p className="section-detail-meta">
                     {topicsCount} {pluralize(topicsCount, 'тема', 'темы', 'тем')}
                     {section.passed ? ' • ✅ пройден' : ''}
@@ -65,39 +61,36 @@ export default function SectionDetail() {
                 <h2>Материалы</h2>
                 <div className="resource-row">
                     <span className="resource-label">🎬 Видео</span>
-                    <span className="resource-value">
-            {section.videoTitle || '— не выбрано —'}
-          </span>
+                    <span className="resource-value">{section.videoTitle || '— не выбрано —'}</span>
                 </div>
                 <div className="resource-row">
                     <span className="resource-label">📖 Конспект</span>
-                    <span className="resource-value">
-            {section.conspectTitle || '— не выбрано —'}
-          </span>
+                    <span className="resource-value">{section.conspectTitle || '— не выбрано —'}</span>
                 </div>
             </section>
 
             <section className="section-detail-topics">
                 <h2>Темы</h2>
-                {topicsCount === 0 && (
-                    <p className="empty">В этом разделе пока нет тем.</p>
-                )}
-                {section.topics.map(topic => {
-                    const testsCount = topic.testsCount || 0
-                    return (
-                        <div key={topic.id} className="topic-row">
-                            <div className="topic-row-title">{topic.title}</div>
-                            <div className="topic-row-meta">
-                                {testsCount} {pluralize(testsCount, 'тест', 'теста', 'тестов')}
-                            </div>
+                {topicsCount === 0 && <p className="empty">В этом разделе пока нет тем.</p>}
+                {section.topics?.map(topic => (
+                    <div
+                        key={topic.id}
+                        className="topic-row"
+                        onClick={() => navigate(`/admin/topics`)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="topic-row-title">{topic.title}</div>
+                        <div className="topic-row-meta">
+                            {topic.testsCount || 0} {pluralize(topic.testsCount, 'тест', 'теста', 'тестов')}
                         </div>
-                    )
-                })}
+                    </div>
+                ))}
             </section>
 
             <div className="section-detail-actions">
-                <button className="btn btn-primary">+ Добавить тему</button>
-                <button className="btn btn-ghost">Редактировать раздел</button>
+                <button className="btn btn-primary" onClick={() => navigate('/admin/topics')}>
+                    Перейти к темам
+                </button>
             </div>
         </div>
     )

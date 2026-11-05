@@ -12,12 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopicListItemDto {
-
     private Long id;
-
     private String title;
-
     private String description;
-
     private int testsCount;
+
+    private Long sectionId;
+    private String sectionTitle;
 }

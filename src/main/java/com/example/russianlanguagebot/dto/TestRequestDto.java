@@ -22,7 +22,7 @@ public class TestRequestDto {
     @NotBlank(message = "Название теста обязательно")
     @Size(max = 255, message = "Название не должно превышать 255 символов")
     private String title;
-
+    private Long topicId;
     @NotEmpty(message = "Тест должен содержать хотя бы один вопрос")
     @Valid
     private List<QuestionRequestDto> questions;

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -26,7 +28,11 @@ public class UserController {
     public UserDto update(@PathVariable Long id, @Valid @RequestBody UserUpdateDto dto) {
         return userService.update(id, dto);
     }
-
+    @GetMapping
+    public List<UserDto> getAll() {
+        return userService.findAll();
+    }
+    
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable Long id) {
         return userService.getById(id);

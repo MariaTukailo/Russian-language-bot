@@ -5,7 +5,7 @@ const menuItems = [
     { to: '/admin', label: 'Главная', end: true },
     { to: '/admin/sections', label: 'Разделы' },
     { to: '/admin/topics', label: 'Темы' },
-    { to: '/admin/questions', label: 'Вопросы' },
+    { to: '/admin/tests', label: 'Тесты' },
     { to: '/admin/users', label: 'Пользователи' },
     { to: '/admin/statistics', label: 'Статистика' },
     { to: '/admin/settings', label: 'Настройки' },
@@ -34,9 +34,7 @@ export default function Sidebar() {
                         key={item.to}
                         to={item.to}
                         end={item.end}
-                        className={({ isActive }) =>
-                            'sidebar-link' + (isActive ? ' active' : '')
-                        }
+                        className={({ isActive }) => 'sidebar-link' + (isActive ? ' active' : '')}
                     >
                         {item.label}
                     </NavLink>

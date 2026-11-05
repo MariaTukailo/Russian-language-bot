@@ -13,14 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -64,8 +57,10 @@ public class TestController {
             @ApiResponse(responseCode = "400", description = "Ошибка валидации")
     })
     @PostMapping
-    public ResponseEntity<TestResponseDto> create(@Valid @RequestBody TestRequestDto dto) {
-        return ResponseEntity.ok(testService.save(dto));
+    public ResponseEntity<TestResponseDto> create(
+            @RequestParam(required = false) Long topicId,
+            @Valid @RequestBody TestRequestDto dto) {
+        return ResponseEntity.ok(testService.save(dto, topicId));
     }
 
     @Operation(summary = "Обновить тест",

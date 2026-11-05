@@ -72,6 +72,8 @@ public class TopicMapper {
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .testsCount(testsCount)
+                .sectionId(entity.getSection() == null ? null : entity.getSection().getId())
+                .sectionTitle(entity.getSection() == null ? null : entity.getSection().getTitle())
                 .build();
     }
 }

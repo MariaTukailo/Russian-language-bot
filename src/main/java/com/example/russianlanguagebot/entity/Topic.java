@@ -29,7 +29,7 @@ public class Topic {
     @JoinColumn(name = "section_id")
     private Section section;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "topic_id")
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> tests;
 }
