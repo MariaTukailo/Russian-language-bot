@@ -26,6 +26,8 @@ public class TopicRequestDto {
     @Size(max = 1000, message = "Описание не должно превышать 1000 символов")
     private String description;
 
+    private Long videoId;              // <-- ДОБАВИТЬ
+    private List<String> conspectUrls;
 
     @NotNull(message = "Список тестов обязателен (может быть пустым)")
     @Valid

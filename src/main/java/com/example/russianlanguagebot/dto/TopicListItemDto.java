@@ -16,7 +16,7 @@ public class TopicListItemDto {
     private String title;
     private String description;
     private int testsCount;
-
+    private Boolean passed;
     private Long sectionId;
     private String sectionTitle;
 }

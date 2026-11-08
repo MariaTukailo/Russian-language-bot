@@ -21,8 +21,4 @@ public class SectionRequestDto {
 
     @Size(max = 1000, message = "Описание не должно превышать 1000 символов")
     private String description;
-
-    private Long videoId;
-
-    private Long conspectDocumentId;
 }

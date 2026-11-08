@@ -61,24 +61,12 @@ public class SectionService {
     public SectionResponseDto save(SectionRequestDto dto) {
         log.info("Сохранение раздела: title={}", dto.getTitle());
 
-        LearningMap map = mapService.getSingleMapOrThrow();
+        LearningMap map = mapService.getSingleMapOrCreate(); // <--- ИЗМЕНИТЬ НАЗВАНИЕ МЕТОДА
         Section section = sectionMapper.toEntity(dto);
         section.setLearningMap(map);
 
         Section saved = sectionRepository.save(section);
         log.info("Раздел сохранён с id={}", saved.getId());
-        return sectionMapper.toDto(saved);
-    }
-
-    @Transactional
-    public SectionResponseDto markPassed(Long sectionId) {
-        log.info("Отметка о прохождении раздела id={}", sectionId);
-
-        Section section = sectionRepository.findById(sectionId)
-                .orElseThrow(() -> new NotFoundException("Раздел", sectionId));
-
-        section.setPassed(true);
-        Section saved = sectionRepository.save(section);
         return sectionMapper.toDto(saved);
     }
 

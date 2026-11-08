@@ -69,7 +69,12 @@ export default function Topics() {
 
             <div className="sections-list">
                 {filtered.map(topic => (
-                    <div key={topic.id} className="section-row">
+                    <div
+                        key={topic.id}
+                        className="section-row"
+                        onClick={() => navigate(`/admin/topics/${topic.id}`)}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="section-info">
                             <div className="section-title">{topic.title}</div>
                             <div className="section-meta">
@@ -78,11 +83,7 @@ export default function Topics() {
                             </div>
                         </div>
 
-                        <button className="btn btn-ghost btn-sm" onClick={() => navigate(`/admin/tests?topicId=${topic.id}`)}>
-                            Тесты →
-                        </button>
-
-                        <div className="action-buttons" style={{ marginLeft: '12px' }}>
+                        <div className="action-buttons" onClick={e => e.stopPropagation()}>
                             <button className="btn-icon" onClick={() => { setEditingTopic(topic); setModalOpen(true) }} title="Редактировать">✎</button>
                             <button className="btn-icon btn-danger" onClick={() => setDeleteId(topic.id)} title="Удалить">✕</button>
                         </div>

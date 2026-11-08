@@ -973,3 +973,110 @@
         display: none;
     }
 }
+/* Быстрое добавление видео */
+.quick-create-box {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--color-border);
+}
+
+/* Превью в модалке */
+.video-preview-box {
+    margin-top: 12px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: #000;
+    width: 100%;
+    max-width: 320px;
+}
+.video-preview-box img {
+    width: 100%;
+    display: block;
+}
+
+/* Превью на странице раздела */
+.video-link-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-decoration: none;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+.video-link-wrapper:hover {
+    text-decoration: underline;
+}
+.video-thumb {
+    width: 200px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    transition: transform 0.2s;
+}
+.video-thumb:hover {
+    transform: scale(1.02);
+}
+.conspect-urls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.conspect-url-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.conspect-img-preview {
+    margin-top: 8px;
+    max-width: 150px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: #fff;
+}
+
+.conspect-img-preview img {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    max-height: 100px;
+}/* Стили для загрузки конспекта */
+.conspect-urls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.conspect-url-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.conspect-img-preview {
+    margin-top: 10px;
+    max-width: 180px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.conspect-img-preview img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    max-height: 120px;
+}

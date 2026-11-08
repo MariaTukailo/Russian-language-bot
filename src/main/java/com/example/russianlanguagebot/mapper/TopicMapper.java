@@ -7,8 +7,10 @@ import com.example.russianlanguagebot.dto.TopicResponseDto;
 import com.example.russianlanguagebot.entity.Section;
 import com.example.russianlanguagebot.entity.Test;
 import com.example.russianlanguagebot.entity.Topic;
+import com.example.russianlanguagebot.entity.Video;
 import com.example.russianlanguagebot.exception.NotFoundException;
 import com.example.russianlanguagebot.repository.SectionRepository;
+import com.example.russianlanguagebot.repository.VideoRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,10 +20,12 @@ public class TopicMapper {
 
     private final TestMapper testMapper;
     private final SectionRepository sectionRepository;
+    private final VideoRepository videoRepository;
 
-    public TopicMapper(TestMapper testMapper, SectionRepository sectionRepository) {
+    public TopicMapper(TestMapper testMapper, SectionRepository sectionRepository, VideoRepository videoRepository) {
         this.testMapper = testMapper;
         this.sectionRepository = sectionRepository;
+        this.videoRepository = videoRepository;
     }
 
     public Topic toEntity(TopicRequestDto dto) {
@@ -41,10 +45,19 @@ public class TopicMapper {
                     .orElseThrow(() -> new NotFoundException("Раздел", sectionId));
         }
 
+        Video video = null;
+        if (dto.getVideoId() != null) {
+            video = videoRepository.findById(dto.getVideoId())
+                    .orElseThrow(() -> new NotFoundException("Видео", dto.getVideoId()));
+        }
+
         return Topic.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .section(section)
+                .video(video)
+                .conspectUrls(dto.getConspectUrls())
+                .passed(false) // По умолчанию тема не пройдена
                 .tests(tests)
                 .build();
     }
@@ -60,6 +73,11 @@ public class TopicMapper {
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
+                .videoId(entity.getVideo() == null ? null : entity.getVideo().getId())
+                .videoTitle(entity.getVideo() == null ? null : entity.getVideo().getTitle())
+                .videoUrl(entity.getVideo() == null ? null : entity.getVideo().getUrl())
+                .conspectUrls(entity.getConspectUrls())
+                .passed(entity.getPassed()) // <--- ДОБАВЛЕНО
                 .tests(tests)
                 .build();
     }
@@ -74,6 +92,7 @@ public class TopicMapper {
                 .testsCount(testsCount)
                 .sectionId(entity.getSection() == null ? null : entity.getSection().getId())
                 .sectionTitle(entity.getSection() == null ? null : entity.getSection().getTitle())
+                .passed(entity.getPassed()) // <--- ДОБАВЛЕНО
                 .build();
     }
 }

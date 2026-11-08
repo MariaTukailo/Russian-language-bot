@@ -21,13 +21,6 @@ public class SectionResponseDto {
 
     private String description;
 
-    private Long videoId;
-
-    private String videoTitle;
-
-    private Long conspectDocumentId;
-
-    private String conspectTitle;
 
     private Boolean passed;
 

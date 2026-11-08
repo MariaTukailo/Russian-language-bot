@@ -44,6 +44,12 @@ public class TopicController {
         return topicService.findAllForList();
     }
 
+    @Operation(summary = "Отметить тему пройденной")
+    @PutMapping("/{id}/pass")
+    public ResponseEntity<TopicResponseDto> markPassed(@PathVariable Long id) {
+        return ResponseEntity.ok(topicService.markPassed(id));
+    }
+
     @Operation(summary = "Получить темы раздела",
             description = "Возвращает список тем, принадлежащих указанному разделу")
     @ApiResponse(responseCode = "200", description = "Список успешно получен")

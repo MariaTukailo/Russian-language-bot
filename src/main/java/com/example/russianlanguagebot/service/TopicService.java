@@ -5,10 +5,12 @@ import com.example.russianlanguagebot.dto.TopicRequestDto;
 import com.example.russianlanguagebot.dto.TopicResponseDto;
 import com.example.russianlanguagebot.entity.Section;
 import com.example.russianlanguagebot.entity.Topic;
+import com.example.russianlanguagebot.entity.Video;
 import com.example.russianlanguagebot.exception.NotFoundException;
 import com.example.russianlanguagebot.mapper.TopicMapper;
 import com.example.russianlanguagebot.repository.SectionRepository;
 import com.example.russianlanguagebot.repository.TopicRepository;
+import com.example.russianlanguagebot.repository.VideoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +23,16 @@ public class TopicService {
 
     private final TopicRepository topicRepository;
     private final SectionRepository sectionRepository;
+    private final VideoRepository videoRepository;
     private final TopicMapper topicMapper;
 
     public TopicService(TopicRepository topicRepository,
                         SectionRepository sectionRepository,
+                        VideoRepository videoRepository,
                         TopicMapper topicMapper) {
         this.topicRepository = topicRepository;
         this.sectionRepository = sectionRepository;
+        this.videoRepository = videoRepository;
         this.topicMapper = topicMapper;
     }
 
@@ -37,6 +42,15 @@ public class TopicService {
         return topicRepository.findAll().stream()
                 .map(topicMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public TopicResponseDto markPassed(Long id) {
+        log.info("Отметка темы id={} как пройденной", id);
+        Topic topic = topicRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Тема", id));
+        topic.setPassed(true);
+        return topicMapper.toDto(topicRepository.save(topic));
     }
 
     @Transactional(readOnly = true)
@@ -85,14 +99,30 @@ public class TopicService {
                     return new NotFoundException("Тема", id);
                 });
 
+        // Обновляем текстовые поля
         topic.setTitle(dto.getTitle());
         topic.setDescription(dto.getDescription());
 
+        // Обновляем список ссылок на конспект
+        topic.setConspectUrls(dto.getConspectUrls());
+
+        // Обновляем привязку к видео
+        if (dto.getVideoId() != null) {
+            Video video = videoRepository.findById(dto.getVideoId())
+                    .orElseThrow(() -> new NotFoundException("Видео", dto.getVideoId()));
+            topic.setVideo(video);
+        } else {
+            topic.setVideo(null); // Если видео открепили
+        }
+
+        // Обновляем привязку к разделу (если передан sectionId)
         if (sectionId != null) {
             Section section = sectionRepository.findById(sectionId)
                     .orElseThrow(() -> new NotFoundException("Раздел", sectionId));
             topic.setSection(section);
         }
+
+        // Поле passed и список тестов мы НЕ ТРОГАЕМ, они остаются как были в базе!
 
         Topic updated = topicRepository.save(topic);
         log.info("Тема id={} обновлена", id);

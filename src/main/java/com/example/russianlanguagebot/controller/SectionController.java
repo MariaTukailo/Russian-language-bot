@@ -88,12 +88,6 @@ public class SectionController {
         return ResponseEntity.ok(sectionService.update(id, dto));
     }
 
-    @Operation(summary = "Отметить раздел пройденным")
-    @PutMapping("/{id}/pass")
-    public ResponseEntity<SectionResponseDto> markPassed(@PathVariable Long id) {
-        return ResponseEntity.ok(sectionService.markPassed(id));
-    }
-
     @Operation(summary = "Удалить раздел",
             description = "Удаляет раздел вместе со всеми вложенными темами")
     @ApiResponses({

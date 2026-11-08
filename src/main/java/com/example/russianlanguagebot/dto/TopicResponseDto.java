@@ -16,10 +16,12 @@ import java.util.List;
 public class TopicResponseDto {
 
     private Long id;
-
     private String title;
-
     private String description;
-
+    private Long videoId;              // <-- ДОБАВИТЬ
+    private String videoTitle;
+    private Boolean passed;// <-- ДОБАВИТЬ
+    private String videoUrl;           // <-- ДОБАВИТЬ
+    private List<String> conspectUrls; // <-- ДОБАВИТЬ
     private List<TestResponseDto> tests;
 }

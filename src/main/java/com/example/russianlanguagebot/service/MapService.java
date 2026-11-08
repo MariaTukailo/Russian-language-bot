@@ -58,10 +58,13 @@ public class MapService {
         return mapMapper.toDto(saved);
     }
 
-    @Transactional(readOnly = true)
-    public LearningMap getSingleMapOrThrow() {
+    @Transactional
+    public LearningMap getSingleMapOrCreate() {
         return mapRepository.findAll().stream()
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Карта ещё не создана", 0L));
+                .orElseGet(() -> {
+                    log.info("Карта не найдена, создаем новую...");
+                    return mapRepository.save(new LearningMap());
+                });
     }
 }

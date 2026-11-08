@@ -13,4 +13,4 @@ export const createTopic = (data, sectionId) => {
 
 export const updateTopic = (id, data) => axios.put(`${BASE}/${id}`, data).then(res => res.data)
 export const deleteTopic = (id) => axios.delete(`${BASE}/${id}`)
-export const getTopicsBySection = (sectionId) => axios.get(`${BASE}/by-section/${sectionId}`).then(res => res.data)
+export const markTopicPassed = (id) => axios.put(`${BASE}/${id}/pass`).then(res => res.data)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getSectionsList, deleteSection } from '../../api/sections'
+import { getSectionsList, getSectionById, deleteSection } from '../../api/sections'
 import AddSectionModal from '../../components/AddSectionModal'
 import ConfirmModal from '../../components/ConfirmModal'
 
@@ -40,6 +40,17 @@ export default function Sections() {
         }
     }
 
+    // ВАЖНО: Загружаем полные данные раздела перед редактированием
+    const handleEdit = (e, section) => {
+        e.stopPropagation()
+        getSectionById(section.id)
+            .then(fullSection => {
+                setEditingSection(fullSection)
+                setModalOpen(true)
+            })
+            .catch(err => console.error("Ошибка при загрузке раздела:", err))
+    }
+
     return (
         <div className="sections-page">
             <header className="page-header">
@@ -66,7 +77,8 @@ export default function Sections() {
                                 <div className="section-meta">{section.topicsCount} {topicsLabel}</div>
                             </div>
                             <div className="action-buttons" onClick={e => e.stopPropagation()}>
-                                <button className="btn-icon" onClick={() => { setEditingSection(section); setModalOpen(true) }}>✎</button>
+                                {/* Передаем событие e в handleEdit */}
+                                <button className="btn-icon" onClick={(e) => handleEdit(e, section)}>✎</button>
                                 <button className="btn-icon btn-danger" onClick={() => setDeleteId(section.id)}>✕</button>
                             </div>
                         </div>
@@ -75,7 +87,6 @@ export default function Sections() {
             </div>
 
             {modalOpen && (
-                /* Передаем section={editingSection} */
                 <AddSectionModal
                     section={editingSection}
                     onClose={() => setModalOpen(false)}
